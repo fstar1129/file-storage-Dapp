@@ -1,13 +1,3 @@
-![MoiBit](https://raw.githubusercontent.com/moibit/logo-assets/master/logos/moibit-solo-banner.jpg)
-
-# MoiBit Sample DApp
-
-[![Chat on Slack](https://img.shields.io/badge/Slack-MoiBit%20Slack%20community-blue)](https://join.slack.com/t/moibit/signup)
-[![Chat on Telegram](https://img.shields.io/badge/Telegram-MoiBit%20Telegram%20community-blue)](https://t.me/moibit)
-[![Follow us on Twitter](https://img.shields.io/badge/Twitter-MoiBit%20Twitter-blue?style=social&logo=twitter)](https://twitter.com/moibitio)
-
-A sample decentralized application that uses **MoiBit API** as a storage platform for off-chain storage.
-
 ## What does the dApp do?
 
 It allows the **Authenticated MoiBit** users to upload their files to MoiBit and store the corresponding Multihash of the files on Ethereum for provenance.  
