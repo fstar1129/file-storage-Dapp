@@ -18,6 +18,7 @@ class Layout extends Component {
         fileType: '',
         modalOpen: false,
         fileName: '',
+        searchFileName: ''
     }
     async componentDidMount() {
 
@@ -71,44 +72,44 @@ class Layout extends Component {
         }
         this.setState({ fileList: data });
     }
-    // handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (this.state.file !== "") {
-    //         let formData = new FormData();
-    //         formData.append('file', this.state.file);
-    //         formData.append('fileName', '/' + this.state.file.name);
-    //         this.setState({ loading: true });
-
-    //         let response = await axios({
-    //             method: 'post',
-    //             url: credentials.CUSTOM_URL+"/moibit/v0/writefile",
-    //             data: formData
-    //         });
-    //         const actualFileName = credentials.API_KEY + "" + response.data.data.Path + "" + response.data.data.Name;
-    //         await Instance.Config.methods.setHash(actualFileName, response.data.data.Hash).send({ from: this.state.accountId });
-    //         if (this.state.accountId === credentials.ADMIN) {
-    //             this.getALLHashes();
-    //             this.setState({ loading: false });
-    //         }
-    //         else {
-    //             this.getFileHash();
-    //             this.setState({ loading: false });
-    //         }
-    //         this.setState({ loading: false });
-    //     }
-    //     else {
-    //         this.setState({ fieldReq: true })
-    //     }
-    // }
 
     handleSubmit = async (e) => {
         e.preventDefault();
+        if (this.state.file !== "") {
+            let formData = new FormData();
+            formData.append('file', this.state.file);
+            formData.append('fileName', '/' + this.state.file.name);
+            this.setState({ loading: true });
+
+            let response = await axios({
+                method: 'post',
+                url: credentials.CUSTOM_URL+"/moibit/v0/writefile",
+                data: formData
+            });
+            const actualFileName = credentials.API_KEY + "" + response.data.data.Path + "" + response.data.data.Name;
+            await Instance.Config.methods.setHash(actualFileName, response.data.data.Hash).send({ from: this.state.accountId });
+            if (this.state.accountId === credentials.ADMIN) {
+                this.getALLHashes();
+                this.setState({ loading: false });
+            }
+            else {
+                this.getFileHash();
+                this.setState({ loading: false });
+            }
+            this.setState({ loading: false });
+        }
+        else {
+            this.setState({ fieldReq: true })
+        }
+    }
+
+    searchFileName = async () => {
         var path = "/"
-        if (this.state.fileName !== "") {
-            path = this.state.fileName;
+        if (this.state.searchFileName !== "") {
+            path = this.state.searchFileName;
         }
 
-        this.setState({ loading: true });
+        // this.setState({ loading: true });
 
         axios.post(
             credentials.CUSTOM_URL+"/moibit/v0/listfiles",
@@ -127,12 +128,12 @@ class Layout extends Component {
                 }
             }
             this.setState({ fileList: data });
-            this.setState({ loading: false });
+            // this.setState({ loading: false });
         })
         .catch(err => {
             console.log(err);
             this.setState({ fileList: [] });
-            this.setState({ loading: false });
+            // this.setState({ loading: false });
         });
     }
 
@@ -256,9 +257,9 @@ class Layout extends Component {
         this.setState({ modalOpen: false });
     }
 
-    updateFileName = (evt) => {
+    updateSearchFileName = (evt) => {
         this.setState({
-          fileName: evt.target.value
+          searchFileName: evt.target.value
         });
     }
     
@@ -270,12 +271,12 @@ class Layout extends Component {
         }
         return (
             <div className="layoutBG">
-                {/* {this.state.fileName !== '' ? <ShowModal modalOpen={this.state.modalOpen}
+                {this.state.fileName !== '' ? <ShowModal modalOpen={this.state.modalOpen}
                     modalClose={this.modalClose}
                     fileType={this.state.fileType}
                     responseData={this.state.readFileIframe}
                     fileName={this.state.fileName}
-                /> : null} */}
+                /> : null}
                 <div style={{ display: 'flex', color: '#fbfbfb', marginLeft: '42vw' }}>
                     <Image src={MoiBit} height="60px" width="160px" />
                     {/* <h3 style={{ marginTop: '10px', fontSize: '26px' }}>MoiBit</h3> */}
@@ -288,16 +289,21 @@ class Layout extends Component {
 
                                     <Table.HeaderCell style={custom_header}>
                                         <Table.Row>
-                                            <Table.Cell textAlign="center" colSpan='2'>
-                                                File Path:
+                                            <Table.Cell textAlign="center">
+                                                <Input type="file" onChange={(e) => {
+                                                    this.setState({ file: e.target.files[0] });
+                                                }} required name="file" style={this.state.fieldReq ? { border: '2px solid red', borderRadius: '5px' } : {}} />
                                             </Table.Cell>
-                                            <Table.Cell textAlign="center" colSpan='2'>
-                                                <Input type="text" value={this.state.fileName} onChange={this.updateFileName} name="fileName" style={this.state.fieldReq ? { border: '2px solid red', borderRadius: '5px' } : {}} />
+                                            <Table.Cell>
+                                                <Button primary type="submit" loading={this.state.loading} disabled={this.state.loading} >Submit</Button>
                                             </Table.Cell>
                                         </Table.Row>
                                         <Table.Row>
-                                            <Table.Cell colSpan='2' textAlign="center" >
-                                                <Button primary type="submit" loading={this.state.loading} disabled={this.state.loading} >Get File Lists</Button>
+                                            <Table.Cell textAlign="center">
+                                                <Input type="text" value={this.state.searchFileName} onChange={this.updateSearchFileName} name="fileName" style={{width: "277px"}} />
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <Button primary type="button" onClick={this.searchFileName}>Search</Button>
                                             </Table.Cell>
                                         </Table.Row>
                                     </Table.HeaderCell>
